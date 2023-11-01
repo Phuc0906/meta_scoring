@@ -48,7 +48,7 @@ const IndividualRoundContainer: React.FC<IndividualContainerProps> = ({team}) =>
         </div>
         <div className="mr-32 w-80 flex items-center gap-10">
             <div className="w-1/2 text-4xl text-white">
-                <label>{team.score - 1} s</label>
+                <label>{team.score} s</label>
             </div>
             <div className="w-1/2 text-center bg-red-600 py-2 px-7 rounded-2xl hover:bg-gray-100 active:bg-red-600">
                 <Link to={'/score-board'} state={{team: team, individual: 1}} className="w-full">Bắt đầu</Link>
@@ -109,6 +109,8 @@ const HomePage = () => {
     useEffect(() => {
         const fetchTeams = async () => {
             const response = await API.graphql(graphqlOperation(queryTeams)) as GraphQLResult<any>;
+            const tempTeam = response.data.listMegatonCompetitionTeams.items;
+            console.log(tempTeam.length)
             setTeams(response.data.listMegatonCompetitionTeams.items)
             // setTeamData(response.data.listGameMatches.items);
             // setTeamData(response.data?.listMegatonMatches.items);

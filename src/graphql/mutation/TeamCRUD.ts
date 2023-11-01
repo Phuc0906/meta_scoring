@@ -26,7 +26,7 @@ mutation MyMutation {
 
 export const queryTeams = `
 query MyQuery {
-  listMegatonCompetitionTeams {
+  listMegatonCompetitionTeams(limit: 40) {
     items {
       board
       brand

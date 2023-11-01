@@ -230,6 +230,8 @@ const RefereeMatchBoard = () => {
             assignBoard = 'final';
         }
 
+        console.log("Process " + assignBoard);
+
         // Check is match available
         try {
             const responseCheck = await API.graphql(graphqlOperation(getMatchByBoard(assignBoard))) as GraphQLResult<any>;
@@ -239,9 +241,11 @@ const RefereeMatchBoard = () => {
                     if (team1.length !== 0) {
                         const response = await API.graphql(graphqlOperation(updateFinishMatchTeam2(responseCheck.data?.listMegatonMatches.items[0].match_id, team1, match.brand1))) as GraphQLResult<any>;
                         console.log(response);
+                        window.location.reload();
                     }else {
                         const response = await API.graphql(graphqlOperation(updateFinishMatchTeam2(responseCheck.data?.listMegatonMatches.items[0].match_id, team2, match.brand2))) as GraphQLResult<any>;
                         console.log(response);
+                        window.location.reload();
                     }
                 }else {
                     const responseCheckThird = await API.graphql(graphqlOperation(getMatchByBoard('third'))) as GraphQLResult<any>;
@@ -251,11 +255,13 @@ const RefereeMatchBoard = () => {
                         console.log(response);
                         const responseThird = await API.graphql(graphqlOperation(updateFinishMatchTeam2(thirdMatchId, match.team2, match.brand2))) as GraphQLResult<any>;
                         console.log(responseThird);
+                        window.location.reload();
                     }else {
                         const response = await API.graphql(graphqlOperation(updateFinishMatchTeam2(responseCheck.data?.listMegatonMatches.items[0].match_id, team2, match.brand2))) as GraphQLResult<any>;
                         console.log(response);
                         const responseThird = await API.graphql(graphqlOperation(updateFinishMatchTeam2(thirdMatchId, match.team1, match.brand1))) as GraphQLResult<any>;
                         console.log(responseThird);
+                        window.location.reload();
                     }
                 }
             }else {
@@ -263,9 +269,11 @@ const RefereeMatchBoard = () => {
                     if (team1.length !== 0) {
                         const response = await API.graphql(graphqlOperation(createMatch(String(maxId), team1, '', match.brand1, 1, assignBoard, 1, 1))) as GraphQLResult<any>;
                         console.log(response);
+                        window.location.reload();
                     }else {
                         const response = await API.graphql(graphqlOperation(createMatch(String(maxId), team2, '', match.brand2, 1, assignBoard, 1, 1))) as GraphQLResult<any>;
                         console.log(response);
+                        window.location.reload();
                     }
                 }else {
                     if (team1.length !== 0) {
@@ -273,11 +281,13 @@ const RefereeMatchBoard = () => {
                         console.log(response);
                         const responseThird = await API.graphql(graphqlOperation(createMatch(String(maxId + 1), match.team2, '', match.brand2, 1, 'third', 1, 1))) as GraphQLResult<any>;
                         console.log(responseThird);
+                        window.location.reload();
                     }else {
                         const response = await API.graphql(graphqlOperation(createMatch(String(maxId), match.team2, '', match.brand2, 1, assignBoard, 1, 1))) as GraphQLResult<any>;
                         console.log(response);
                         const responseThird = await API.graphql(graphqlOperation(createMatch(String(maxId + 1), match.team1, '', match.brand1, 1, 'third', 1, 1))) as GraphQLResult<any>;
                         console.log(responseThird);
+                        window.location.reload();
                     }
                 }
             }
@@ -294,14 +304,17 @@ const RefereeMatchBoard = () => {
             const response = await API.graphql(graphqlOperation(updateFinishMatchScore(match.match_id, 2, 1))) as GraphQLResult<any>;
             console.log(response);
             if ((match.board !== 'final') && (match.board !== 'third')) {
-
                 onFinishClick(match.team1, '',  1).then(r => console.log(r));
+            }else {
+                onFinishClick(match.team1, '', 1).then(r => console.log(r));
             }
         }else {
             const response = await API.graphql(graphqlOperation(updateFinishMatchScore(match.match_id, 1, 2))) as GraphQLResult<any>;
             console.log(response);
             if ((match.board !== 'final') && (match.board !== 'third')) {
                 onFinishClick('', match.team2,  2).then(r => console.log(r));
+            }else {
+                onFinishClick('', match.team2, 2).then(r => console.log(r));
             }
         }
     }
@@ -471,8 +484,9 @@ const RefereeMatchBoard = () => {
                             }} className="w-full h-full px-9 py-2 rounded-xl">Cancel</button>
                         </div>
                         <div className="bg-red-200 rounded-xl hover:bg-gray-50 active:bg-gray-400">
-                            <button onClick={() => {
-                                onProcessNextMatch().then(r => window.location.reload());
+                            <button onClick={async () => {
+                                await onProcessNextMatch();
+
 
                             }} className="w-full h-full px-9 py-2 rounded-xl">Xác nhận</button>
                         </div>
