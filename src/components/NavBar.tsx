@@ -1,6 +1,7 @@
 import React from "react";
 import logo2 from '../assests/1_White.png'
 import {Link} from "react-router-dom";
+import {Authenticator} from "@aws-amplify/ui-react";
 
 const NavBar = () => {
     return <div className="sticky top-0 z-40 flex justify-between items-center bg-[#222222] py-4 px-3">
@@ -17,6 +18,15 @@ const NavBar = () => {
             <div>
                 <Link to={"/teams"} >ĐỘI DỰ THI</Link>
             </div>
+            <Authenticator>
+                {({ signOut, user }) => (
+                    <div onMouseEnter={() => {
+                    }}>
+                        <button onClick={signOut} >Sign Out</button>
+                    </div>
+                )}
+            </Authenticator>
+
         </div>
     </div>
 }

@@ -4,10 +4,22 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
+import {Authenticator} from "@aws-amplify/ui-react";
+import '@aws-amplify/ui-react/styles.css';
 import awsmobile from "./AppSync";
 import {Amplify} from "aws-amplify";
 
 const appConfig = awsmobile
+
+Amplify.configure({
+    Auth: {
+        region: 'ap-northeast-2',
+        userPoolId: 'ap-northeast-2_XovP2kpdC',
+        identityPoolId: 'ap-northeast-2:63b7fbc6-33dc-438d-b356-32efd8510da3',
+        userPoolWebClientId: 'pq3tqufatsaqn1h32k0hdau95',
+        mandatorySignIn: false
+    }
+})
 
 Amplify.configure(appConfig);
 
@@ -18,7 +30,9 @@ const root = ReactDOM.createRoot(
 root.render(
     <BrowserRouter>
         <React.StrictMode>
-            <App />
+            <Authenticator hideSignUp>
+                <App/>
+            </Authenticator>
         </React.StrictMode>
     </BrowserRouter>
 );

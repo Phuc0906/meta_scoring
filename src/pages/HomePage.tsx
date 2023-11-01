@@ -8,6 +8,7 @@ import {API, graphqlOperation} from "aws-amplify";
 import {queryMatches} from "../graphql/query/Matches";
 import {getAllMatches} from "../graphql/mutation/MatchCRUD";
 import { GraphQLResult } from "@aws-amplify/api";
+import {queryTeams} from "../graphql/mutation/TeamCRUD";
 import {APITeamProps} from "./Teams";
 
 export const img = [team1, team2, team3, team4];
@@ -31,15 +32,40 @@ interface MatchContainerProps {
     teamImg: string[]
 }
 
+interface IndividualContainerProps {
+    team: APITeamProps
+}
+
+const IndividualRoundContainer: React.FC<IndividualContainerProps> = ({team}) => {
+    return <div className="bg-[#303030] flex items-center justify-between">
+        <div className=" flex gap-8 items-center">
+            <div className="w-32">
+                <img src={img[team.brand - 1]}/>
+            </div>
+            <div className="text-4xl text-white">
+                <label>{team.team}</label>
+            </div>
+        </div>
+        <div className="mr-32 w-80 flex items-center gap-10">
+            <div className="w-1/2 text-4xl text-white">
+                <label>{team.score - 1} s</label>
+            </div>
+            <div className="w-1/2 text-center bg-red-600 py-2 px-7 rounded-2xl hover:bg-gray-100 active:bg-red-600">
+                <Link to={'/score-board'} state={{team: team, individual: 1}} className="w-full">Bắt đầu</Link>
+            </div>
+        </div>
+    </div>
+}
+
 
 const MatchContainer: React.FC<MatchContainerProps> = ({match, teamImg}) => {
-    return <div className="mx-14 rounded-xl border-2 border-[#222222] mt-10">
-        <div className="text-white text-4xl w-full text-center bg-[#222222] rounded-t-xl py-2">
-            <label>Bảng {match.board}</label>
+    return <div className="mx-14 rounded-xl border-2 border-[#303030] mt-10">
+        <div className="text-white text-4xl w-full text-center border-[#303030] rounded-t-xl py-2">
+            <label>Bảng {match.board === 'quarter_1' ? 'Tứ kết 1' : (match.board === 'quarter_2') ? 'Tứ kết 2' : (match.board === 'quarter_3') ? 'Tứ kết 3' : (match.board === 'quarter_4') ? 'Tứ kết 4' : (match.board === 'semi_1') ? 'Bán kết 1' : (match.board === 'semi_2') ? 'Bán kết 2' : (match.board === 'final') ? 'Chung kết' : 'Tranh ba' }</label>
         </div>
-        <div className="flex gap-20 items-center">
-            <div className="w-full h-fit py-5 text-white flex items-center justify-between px-14">
-                <div className="text-4xl flex items-center justify-start gap-5">
+        <div className="flex gap-20 items-center border-[#303030]">
+            <div className="w-full [#303030] h-fit py-5 text-white flex items-center justify-between px-14">
+                <div className="text-4xl [#303030] flex items-center justify-start gap-5">
                     <div className="w-28">
                         <img src={teamImg[match.brand1 - 1]} alt={"Team 1"} />
                     </div>
@@ -47,7 +73,7 @@ const MatchContainer: React.FC<MatchContainerProps> = ({match, teamImg}) => {
                         <label>{match.team1}</label>
                     </div>
                 </div>
-                <div className="text-4xl flex gap-4 items-center">
+                <div className="text-4xl flex gap-4 items-center invisible">
                     <div>
                         <label>{match.score1 - 1}</label>
                     </div>
@@ -69,7 +95,7 @@ const MatchContainer: React.FC<MatchContainerProps> = ({match, teamImg}) => {
             </div>
             <div className="w-1/5 pr-5">
                 <div className="w-full text-center bg-red-600 py-2 px-7 rounded-2xl hover:bg-gray-100 active:bg-red-600">
-                    <Link to={'/score-board'} state={{match: match}} className="w-full">Bắt đầu</Link>
+                    <Link to={'/score-board'} state={{match: match, individual: 0}} className="w-full">Bắt đầu</Link>
                 </div>
             </div>
         </div>
@@ -78,8 +104,20 @@ const MatchContainer: React.FC<MatchContainerProps> = ({match, teamImg}) => {
 
 const HomePage = () => {
     const [teamData, setTeamData] = useState<MatchProps[]>([])
+    const [teams, setTeams] = useState<APITeamProps[]>([]);
 
     useEffect(() => {
+        const fetchTeams = async () => {
+            const response = await API.graphql(graphqlOperation(queryTeams)) as GraphQLResult<any>;
+            setTeams(response.data.listMegatonCompetitionTeams.items)
+            // setTeamData(response.data.listGameMatches.items);
+            // setTeamData(response.data?.listMegatonMatches.items);
+            // console.log(response.data?.listMegatonMatches.items);
+            // const matchTemp = response.data?.listMegatonCompetitionTeams.items
+            // matchTemp.sort((a: APITeamProps, b: APITeamProps) => parseInt(a.team_id, 10) - parseInt(b.team_id, 10));
+            // setTeams(matchTemp);
+        }
+
         const fetch = async () => {
             try {
                 const response = await API.graphql(graphqlOperation(getAllMatches)) as GraphQLResult<any>;
@@ -93,12 +131,30 @@ const HomePage = () => {
                 console.error(err)
             }
         }
-        fetch();
+        fetch().then(r => console.log(r));
+        fetchTeams().then(r => console.log(r));
     }, [])
 
     return <div className="mt-5">
-        <div>
-            {teamData.map((match, index) => <MatchContainer match={match} teamImg={img} key={index}/>)}
+        <div className=" w-full">
+            <div className={`bg-[#222222] mx-10 px-4 py-5`}>
+                <div className="text-3xl text-white">
+                    <label>Vòng 1</label>
+                </div>
+                <div className="mt-7">
+                    {teams.map((team, index) => <IndividualRoundContainer team={team} key={index} />)}
+                </div>
+            </div>
+        </div>
+        <div className=" w-full mt-10">
+            <div className={`bg-[#222222] mx-10 px-4 py-5`}>
+                <div className="text-3xl text-white">
+                    <label>Vòng 2</label>
+                </div>
+                <div className="mt-7">
+                    {teamData.map((match, index) => <MatchContainer match={match} teamImg={img} key={index}/>)}
+                </div>
+            </div>
         </div>
     </div>
 }

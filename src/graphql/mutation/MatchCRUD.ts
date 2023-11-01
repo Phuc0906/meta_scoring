@@ -1,9 +1,9 @@
 import exp from "constants";
 
-export const createMatch = (match_id: string, team1: string, team2: string, brand1: number, brand2: number, board: string) => {
+export const createMatch = (match_id: string, team1: string, team2: string, brand1: number, brand2: number, board: string, score1: number, score2: number) => {
     return `
 mutation MyMutation {
-    createMegatonMatch(input: {brand1: ${brand1}, brand2: ${brand2}, live: 1, match_id: "${match_id}", score1: 1, score2: 1, team1: "${team1}", team2: "${team2}", table: 1, board: "${board}"}) {
+    createMegatonMatch(input: {brand1: ${brand1}, brand2: ${brand2}, live: 1, match_id: "${match_id}", score1: ${score1}, score2: ${score2}, team1: "${team1}", team2: "${team2}", table: 1, board: "${board}"}) {
         team1
         team2
         score1
@@ -16,6 +16,18 @@ mutation MyMutation {
     }
 }
 `
+}
+
+export const getMatchByBoard = (board: string) => {
+    return `
+    query MyQuery {
+      listMegatonMatches(filter: {board: {eq: "${board}"}}) {
+        items {
+          match_id
+        }
+      }
+    }
+    `
 }
 
 
@@ -62,6 +74,36 @@ export const registerTable = (match_id: string, table: number) => {
       }
     }
 `
+}
+
+export const updateFinishMatchScore = (match_id: string, score1: number, score2: number) => {
+    return `
+    mutation MyMutation {
+      updateMegatonMatch(input: {match_id: "${match_id}", score1: ${score1}, score2: ${score2}}) {
+        match_id
+      }
+    }
+    `
+}
+
+export const updateFinishMatchTeam1 = (match_id: string, team1: string, brand1: number) => {
+    return `
+    mutation MyMutation {
+      updateMegatonMatch(input: {match_id: "${match_id}", score1: 1, score2: 1, team1: "${team1}", brand1: ${brand1}}) {
+        match_id
+      }
+    }
+    `
+}
+
+export const updateFinishMatchTeam2 = (match_id: string, team2: string, brand2: number) => {
+    return `
+    mutation MyMutation {
+      updateMegatonMatch(input: {match_id: "${match_id}", score1: 1, score2: 1, team2: "${team2}", brand2: ${brand2}}) {
+        match_id
+      }
+    }
+    `
 }
 
 export const updateEndMatch = (match_id: string) => {

@@ -9,7 +9,7 @@ import GroupStage from "./pages/GroupStage";
 
 function App() {
     return (
-        <div className="">
+        <div className="relative">
             <NavBar/>
             <Routes>
                 <Route path={"/"} element={<HomePage/>} />

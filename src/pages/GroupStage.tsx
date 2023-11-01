@@ -85,13 +85,13 @@ const GroupStage = () => {
         const fetch = async () => {
             try {
                 const response = await API.graphql(graphqlOperation(queryTeams)) as GraphQLResult<any>;
-                const teamsTemp = response.data?.listMetaScoringCompetitions.items;
+                const teamsTemp = response.data?.listMegatonCompetitionTeams.items;
                 teamsTemp.sort((a: APITeamProps, b: APITeamProps) => parseInt(a.team_id, 10) - parseInt(b.team_id, 10));
                 setTeamList(teamsTemp)
                 setGroups(groupByGroup(teamsTemp));
-                console.log(response.data?.listMetaScoringCompetitions.items);
             }catch (err) {
                 console.error("Error in api")
+                console.log(err);
             }
         }
         fetch();
@@ -141,7 +141,7 @@ const GroupStage = () => {
                         brand2: groupedArray[f][j].brand,
                         live: 1
                     });
-                    const response = await API.graphql(graphqlOperation(createMatch(match_idx.toString(), groupedArray[f][i].team, groupedArray[f][j].team, groupedArray[f][i].brand, groupedArray[f][j].brand, groupedArray[f][i].board))) as GraphQLResult<any>;
+                    const response = await API.graphql(graphqlOperation(createMatch(match_idx.toString(), groupedArray[f][i].team, groupedArray[f][j].team, groupedArray[f][i].brand, groupedArray[f][j].brand, groupedArray[f][i].board, 1, 1))) as GraphQLResult<any>;
                     match_idx += 1;
                 }
             }
@@ -155,18 +155,10 @@ const GroupStage = () => {
             let alphabetIdx = 0;
             const tempList = [...teamList];
             for (let i = 0; i < teamList.length; i++) {
-                if (tracking < 4) {
-                    tempList[i].board = boardArr[alphabetIdx];
-                    const response = await API.graphql(graphqlOperation(updateTeamBoard(tempList[i].team_id, boardArr[alphabetIdx]))) as GraphQLResult<any>;
-                    tracking++;
-                }else {
-                    i -= 1;
-                    tracking = 0;
-                    alphabetIdx++;
-                }
+                tempList[i].board = boardArr[alphabetIdx];
+                const response = await API.graphql(graphqlOperation(updateTeamBoard(tempList[i].team_id, boardArr[alphabetIdx]))) as GraphQLResult<any>;
             }
             console.log(tempList);
-            // console.log(generateMatches(groupByGroup(tempList)));
             setGroups(groupByGroup(tempList));
         }
     }
@@ -197,8 +189,7 @@ const GroupStage = () => {
         </div>
         <div className="flex flex-col gap-10 text-white mt-10 w-4/5 mx-auto">
             {groups.map((group, index) => {
-                const tempGroup = group;
-                tempGroup.sort((a, b) => (((((a.win - 1)*3) + (a.draw - 1)) - (((b.win - 1)*3) + (b.draw - 1))) !== 0 ? ((((a.win - 1)*3) + (a.draw - 1)) - (((b.win - 1)*3) + (b.draw - 1))) : ((a.win - b.win) !== 0) ? (a.win - b.win) : (b.lose - a.lose)) )
+
 
                 return <div className="  text-2xl font-bold rounded-3xl">
                     <div className="bg-black text-center flex items-center justify-center pt-5 pb-5 rounded-t-3xl">
@@ -225,7 +216,7 @@ const GroupStage = () => {
                             </div>
                         </div>
                         <div className="flex flex-col gap-0 ">
-                            {tempGroup.map((team, index) =><GroupStageRowBuilder idx={index} team={team} key={index}/>)}
+                            {group.map((team, index) =><GroupStageRowBuilder idx={index} team={team} key={index}/>)}
                         </div>
                     </div>
                 </div>

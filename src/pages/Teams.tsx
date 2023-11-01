@@ -18,18 +18,14 @@ interface TeamListProps {
 }
 
 export interface APITeamProps {
-    "team_id": string,
-    "team": string,
-    "win": number,
-    "draw": number,
-    "lose": number,
-    "board": string,
-    "round_32": string,
-    "round_16": string,
-    "quarter": string,
-    "semi": string,
-    "final": string,
-    "brand": number
+    board: string,
+    brand: number
+    draw: number,
+    lose: number,
+    score: number
+    team: string
+    team_id: string
+    win: number
 }
 
 interface TeamInfoRowProps {
@@ -66,11 +62,12 @@ const Teams = () => {
         const fetch = async () => {
             try {
                 const response = await API.graphql(graphqlOperation(queryTeams)) as GraphQLResult<any>;
-                const teamsTemp = response.data?.listMetaScoringCompetitions.items;
+                const teamsTemp = response.data?.listMegatonCompetitionTeams.items;
                 teamsTemp.sort((a: APITeamProps, b: APITeamProps) => parseInt(a.team_id, 10) - parseInt(b.team_id, 10));
-                setTeamList(teamsTemp)
-                console.log(response.data?.listMetaScoringCompetitions.items);
+                setTeamList(teamsTemp);
+
             }catch (err) {
+                console.log(err);
                 console.error("Error in api")
             }
         }
@@ -96,6 +93,7 @@ const Teams = () => {
 
         if ((teamName.length !== 0) && (selectedBrand.length !== 0)) {
             const tempList = [...teamList];
+            console.log("MAX " + maxId);
             const response = await API.graphql(graphqlOperation(createTeam(`${maxId + 1}`, teamName, selectedBrandIdx))) as GraphQLResult<any>;
             console.log(response);
             tempList.push({
@@ -105,11 +103,7 @@ const Teams = () => {
                 "draw": 1,
                 "lose": 1,
                 "board": "",
-                "round_32": "",
-                "round_16": "",
-                "quarter": "",
-                "semi": "",
-                "final": "",
+                "score": 1,
                 "brand": selectedBrandIdx
             })
             setTeamName('');
