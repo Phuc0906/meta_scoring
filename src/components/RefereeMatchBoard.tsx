@@ -321,7 +321,7 @@ const RefereeMatchBoard = () => {
 
     return <div>
         <div className={` relative`}>
-            <div className={`relative w-screen h-screen  mx-auto bg-[#222222] rounded-2xl`}>
+            <div className={`relative w-screen h-screen   mx-auto bg-[#222222] rounded-2xl`}>
                 <div className={`w-full text-center text-6xl text-white py-6`}>
                     <label>{match.match_id}</label>
                 </div>
@@ -349,20 +349,20 @@ const RefereeMatchBoard = () => {
                     </div>
                 </div> : null}
 
-                <div className="flex w-full items-center justify-between">
+                <div className="flex w-full  items-center justify-between">
                     <div className="flex items-center justify-start">
-                        <div className={`w-96`}>
+                        <div className={`w-3/5 lg:w-96`}>
                             <div className="w-full">
                                 <img src={img[match.brand1 - 1]} alt={"Team 1"}/>
                             </div>
-                            <div className={`w-full text-center text-white text-5xl`}>
+                            <div className={`w-full text-center text-white text-xl lg:text-5xl`}>
                                 <label>{match.team1}</label>
                             </div>
-                            {(match.score1 === match.score2) ? <div className="w-1/2 bg-red-600 mx-auto mt-5 rounded-xl">
+                            {(match.score1 === match.score2) ? <div className="w-2/3 lg:w-1/2 bg-red-600 mx-auto mt-5 rounded-xl">
                                 <button onClick={async () => {
                                     setTeamWin(1);
                                     setConfirmRequest(true);
-                                }} className="w-full h-full px-7 py-2">Về đích</button>
+                                }} className="w-full h-full px-0 lg:px-7 py-2">Về đích</button>
                             </div> : null}
                         </div>
                         {!onMatchEnd ? <div className="flex flex-col gap-10 items-center">
@@ -397,7 +397,7 @@ const RefereeMatchBoard = () => {
                         </div> : null}
                     </div>
 
-                    <div className={`text-white text-8xl flex items-center justify-between gap-9`}>
+                    <div className={`text-white text-8xl flex items-center justify-between gap-9 `}>
                         <div>
                             <label>{match.score1 - 1}</label>
                         </div>
@@ -438,14 +438,14 @@ const RefereeMatchBoard = () => {
                                 </svg>
                             </div>
                         </div> : null}
-                        <div className={`w-96`}>
+                        <div className={`w-3/5 lg:w-96`}>
                             <div className="w-full">
                                 <img src={img[match.brand2 - 1]} alt={"Team 1"}/>
                             </div>
-                            <div className={`w-full text-center text-white text-5xl`}>
+                            <div className={`w-full text-center text-white text-xl lg:text-5xl`}>
                                 <label>{match.team2}</label>
                             </div>
-                            {(match.score1 === match.score2) ? <div className="w-1/2 bg-red-600 mx-auto mt-5 rounded-xl">
+                            {(match.score1 === match.score2) ? <div className="w-2/3 lg:w-1/2 bg-red-600 mx-auto mt-5 rounded-xl">
                                 <button onClick={async () => {
                                     setTeamWin(2);
                                     setConfirmRequest(true);
