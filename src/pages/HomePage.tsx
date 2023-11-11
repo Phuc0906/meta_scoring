@@ -110,6 +110,13 @@ const HomePage = () => {
         const fetchTeams = async () => {
             const response = await API.graphql(graphqlOperation(queryTeams)) as GraphQLResult<any>;
             const tempTeam = response.data.listMegatonCompetitionTeams.items;
+            tempTeam.sort((a: APITeamProps, b: APITeamProps) => {
+                // Convert team_id to numbers for numerical comparison
+                const teamIdA = parseInt(a.team_id);
+                const teamIdB = parseInt(b.team_id);
+
+                return teamIdA - teamIdB;
+            });
             console.log(tempTeam.length)
             setTeams(response.data.listMegatonCompetitionTeams.items)
         }
