@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
-import {MatchProps} from "../pages/HomePage";
+import {MatchProps} from "./MatchContainer";
 import {API, graphqlOperation} from "aws-amplify";
-import {createTeam, getTeamByName, updateTeamScore} from "../graphql/mutation/TeamCRUD";
+import {getTeamByName} from "../graphql/mutation/TeamCRUD";
 import {GraphQLResult} from "@aws-amplify/api";
 import {mutateMatch, queryMatchById, updateMatchScore} from "../graphql/query/Matches";
 import {queryBusyTable} from "../graphql/query/Table";
@@ -20,11 +20,11 @@ import team4 from "../assests/logo CIS.png";
 
 const img = [team1, team2, team3, team4];
 
-interface TableSelectionProps {
+export interface TableSelectionProps {
     table: number
 }
 
-interface TeamProps {
+export interface TeamProps {
     board: string,
     brand: number,
     draw: number,
@@ -32,7 +32,8 @@ interface TeamProps {
     team: string,
     team_id: string,
     win: number,
-    semi: number
+    semi: number,
+    score?: number
 }
 
 const RefereeMatchBoard = () => {
@@ -81,7 +82,7 @@ const RefereeMatchBoard = () => {
     useEffect(() => {
         const fetchTeam = async (team: string, whichTeam: number) => {
             const response = await API.graphql(graphqlOperation(getTeamByName(team))) as GraphQLResult<any>;
-            const result = response.data?.listMetaScoringCompetitions.items[0];
+            const result = response.data?.listMegatonCompetitionTeamTables.items[0];
             if (whichTeam === 1) {
                 setTeam1(result);
             }else {
@@ -189,26 +190,26 @@ const RefereeMatchBoard = () => {
         const response = await API.graphql(graphqlOperation(updateEndMatch(match.match_id))) as GraphQLResult<any>;
         console.log(response);
 
-        try {
-            if (match.score1 === match.score2) {
-                const drawUpdateTeam1 = await API.graphql(graphqlOperation(updateGroupStageMatch(team1.team_id, team1.draw + 1, team1.lose, team1.win, team1.semi + match.score1))) as GraphQLResult<any>;
-                const drawUpdateTeam2 = await API.graphql(graphqlOperation(updateGroupStageMatch(team2.team_id, team2.draw + 1, team2.lose, team2.win, team2.semi + match.score2))) as GraphQLResult<any>;
-                console.log(drawUpdateTeam1);
-                console.log(drawUpdateTeam2);
-            }else if (match.score1 > match.score2 ) {
-                const winUpdateTeam1 = await API.graphql(graphqlOperation(updateGroupStageMatch(team1.team_id, team1.draw, team1.lose, team1.win  + 1, team1.semi + match.score1))) as GraphQLResult<any>;
-                const winUpdateTeam2 = await API.graphql(graphqlOperation(updateGroupStageMatch(team2.team_id, team2.draw, team2.lose  + 1, team2.win, team2.semi + match.score2))) as GraphQLResult<any>;
-                console.log(winUpdateTeam1);
-                console.log(winUpdateTeam2);
-            }else {
-                const winUpdateTeam1 = await API.graphql(graphqlOperation(updateGroupStageMatch(team1.team_id, team1.draw, team1.lose + 1, team1.win, team1.semi + match.score1))) as GraphQLResult<any>;
-                const winUpdateTeam2 = await API.graphql(graphqlOperation(updateGroupStageMatch(team2.team_id, team2.draw, team2.lose, team2.win + 1, team2.semi + match.score2))) as GraphQLResult<any>;
-                console.log(winUpdateTeam1);
-                console.log(winUpdateTeam2);
-            }
-        }catch (err) {
-            console.log(err);
-        }
+        // try {
+        //     if (match.score1 === match.score2) {
+        //         const drawUpdateTeam1 = await API.graphql(graphqlOperation(updateGroupStageMatch(team1.team_id, team1.draw + 1, team1.lose, team1.win, team1.semi + match.score1))) as GraphQLResult<any>;
+        //         const drawUpdateTeam2 = await API.graphql(graphqlOperation(updateGroupStageMatch(team2.team_id, team2.draw + 1, team2.lose, team2.win, team2.semi + match.score2))) as GraphQLResult<any>;
+        //         console.log(drawUpdateTeam1);
+        //         console.log(drawUpdateTeam2);
+        //     }else if (match.score1 > match.score2 ) {
+        //         const winUpdateTeam1 = await API.graphql(graphqlOperation(updateGroupStageMatch(team1.team_id, team1.draw, team1.lose, team1.win  + 1, team1.semi + match.score1))) as GraphQLResult<any>;
+        //         const winUpdateTeam2 = await API.graphql(graphqlOperation(updateGroupStageMatch(team2.team_id, team2.draw, team2.lose  + 1, team2.win, team2.semi + match.score2))) as GraphQLResult<any>;
+        //         console.log(winUpdateTeam1);
+        //         console.log(winUpdateTeam2);
+        //     }else {
+        //         const winUpdateTeam1 = await API.graphql(graphqlOperation(updateGroupStageMatch(team1.team_id, team1.draw, team1.lose + 1, team1.win, team1.semi + match.score1))) as GraphQLResult<any>;
+        //         const winUpdateTeam2 = await API.graphql(graphqlOperation(updateGroupStageMatch(team2.team_id, team2.draw, team2.lose, team2.win + 1, team2.semi + match.score2))) as GraphQLResult<any>;
+        //         console.log(winUpdateTeam1);
+        //         console.log(winUpdateTeam2);
+        //     }
+        // }catch (err) {
+        //     console.log(err);
+        // }
     }
 
     const onFinishClick = async (team1: string, team2: string, whoWin: number) => {
@@ -370,7 +371,7 @@ const RefereeMatchBoard = () => {
 
                                 const queryCommand = updateMatchScore(match.match_id, match.score1 + 1, match.score2, match.brand1, match.brand2, match.team1, match.team2);
                                 API.graphql(graphqlOperation(queryCommand));
-                                setMatch(prevState => ({
+                                setMatch((prevState: MatchProps) => ({
                                     ...prevState,
                                     score1: match.score1 + 1
                                 }))
@@ -383,7 +384,7 @@ const RefereeMatchBoard = () => {
                                 if (match.score1 > 1) {
                                     const queryCommand = updateMatchScore(match.match_id, match.score1 - 1, match.score2, match.brand1, match.brand2, match.team1, match.team2);
                                     API.graphql(graphqlOperation(queryCommand));
-                                    setMatch(prevState => ({
+                                    setMatch((prevState: MatchProps) => ({
                                         ...prevState,
                                         score1: match.score1 - 1
                                     }))
@@ -414,7 +415,7 @@ const RefereeMatchBoard = () => {
                             <div onClick={() => {
                                 const queryCommand = updateMatchScore(match.match_id, match.score1, match.score2 + 1, match.brand1, match.brand2, match.team1, match.team2);
                                 const response = API.graphql(graphqlOperation(queryCommand)) as GraphQLResult<any>;
-                                setMatch(prevState => ({
+                                setMatch((prevState: MatchProps) => ({
                                     ...prevState,
                                     score2: match.score2 + 1
                                 }))
@@ -427,7 +428,7 @@ const RefereeMatchBoard = () => {
                                 if (match.score2 > 1) {
                                     const queryCommand = updateMatchScore(match.match_id, match.score1, match.score2 - 1, match.brand1, match.brand2, match.team1, match.team2);
                                     const response = API.graphql(graphqlOperation(queryCommand)) as GraphQLResult<any>;
-                                    setMatch(prevState => ({
+                                    setMatch((prevState: MatchProps) => ({
                                         ...prevState,
                                         score2: match.score2 - 1
                                     }))

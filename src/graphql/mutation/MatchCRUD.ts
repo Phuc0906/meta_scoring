@@ -31,24 +31,45 @@ export const getMatchByBoard = (board: string) => {
 }
 
 
-export const getAllMatches = `
-query MyQuery {
-  listMegatonMatches {
-    items {
-      board
-      brand1
-      brand2
-      live
-      match_id
-      score1
-      score2
-      table
-      team1
-      team2
-    }
-  }
-}
-`;
+export const getAllMatches = (board: string) => {
+    return `
+        query MyQuery {
+          listMegatonMatches(filter: {board: {contains: "${board}"}}, limit: 40) {
+            items {
+              board
+              brand1
+              brand2
+              live
+              match_id
+              score1
+              score2
+              table
+              team1
+              team2
+            }
+          }
+        }
+        `
+};
+
+export const getAllSUMOMatches = `
+        query MyQuery {
+          listMegatonMatches(limit: 200) {
+            items {
+              board
+              brand1
+              brand2
+              live
+              match_id
+              score1
+              score2
+              table
+              team1
+              team2
+            }
+          }
+        }
+        `;
 
 export const setMatchLive = (match_id: string) => {
     return `
@@ -118,11 +139,53 @@ export const updateEndMatch = (match_id: string) => {
     `
 }
 
-export const updateGroupStageMatch = (team_id: string, draw: number, lose: number, win: number, semi: number) => {
+export const updateGroupStageMatch = (team_id: string, draw: number, lose: number, win: number, score: string) => {
     return `
     mutation MyMutation {
-      updateMetaScoringCompetition(input: {team_id: "${team_id}", draw: ${draw}, lose: ${lose}, win: ${win}}) {
+      updateMegatonCompetitionTeamTable(input: {team_id: "${team_id}", draw: ${draw}, lose: ${lose}, win: ${win}, score: ${score}}) {
         team_id
+      }
+    }
+    `
+}
+
+export const queryMatchByBoard = (board: string) => {
+    return `query MyQuery {
+      listMegatonMatches(filter: {board: {contains: "${board}"}}) {
+        items {
+          match_id
+        }
+      }
+    }`
+}
+
+export const queryGroupStageTeams = (board: string) => {
+    return `
+        query MyQuery {
+          listMegatonCompetitionTeamTables(filter: {board: {contains: "${board}"}}) {
+            items {
+              board
+              brand
+              draw
+              lose
+              score
+              team
+              team_id
+              win
+            }
+          }
+        }
+    `
+}
+
+
+export const checkMatchExist = (match: string) => {
+    return `
+    query MyQuery {
+      listMegatonMatches(filter: {board: {contains: "${match}"}}, limit: 200) {
+        items {
+          match_id
+        }
       }
     }
     `
