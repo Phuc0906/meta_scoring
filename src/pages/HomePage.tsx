@@ -21,7 +21,7 @@ export const img = [team1, team2, team3, team4];
 const HomePage = () => {
 
 
-    return <div className="mt-5">
+    return <div className="mt-5 mb-20">
         <SUMO category={"GROUP_SUMO_UNI_A"}/>
         <SUMO category={"GROUP_SUMO_UNI_B"}/>
         <SUMO category={"GROUP_SUMO_UNI_C"}/>
@@ -30,8 +30,8 @@ const HomePage = () => {
         <SUMO category={"SUMO_UNI_semi"}/>
         <SUMO category={"SUMO_UNI_final"}/>
         <SUMO category={"SUMO_UNI_third"}/>
-        {/*<MicromouseRacing round={1} category={"DRONE"}/>*/}
-        {/*<MicromouseRacing round={2} category={"DRONE"}/>*/}
+        <MicromouseRacing round={1} category={"DRONE_UNI"}/>
+        <MicromouseRacing round={2} category={"DRONE_UNI"}/>
         {/*<MicromouseRacing round={1} category={"RACING"}/>*/}
         {/*<MicromouseRacing round={2} category={"RACING"}/>*/}
     </div>

@@ -15,9 +15,9 @@ const NavBar = () => {
             <div className={`relative w-fit`}>
                 <Link to={`/group-stage`} >BẢNG ĐẤU</Link>
             </div>
-            <div>
-                <Link to={"/teams"} >ĐỘI DỰ THI</Link>
-            </div>
+            {/*<div>*/}
+            {/*    <Link to={"/teams"} >ĐỘI DỰ THI</Link>*/}
+            {/*</div>*/}
             <Authenticator>
                 {({ signOut, user }) => (
                     <div onMouseEnter={() => {
