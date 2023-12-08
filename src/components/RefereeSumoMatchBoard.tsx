@@ -95,8 +95,7 @@ const RefereeSumoMatchBoard = () => {
         const fetchCurrentTable = async () => {
             if (location.state.match !== null) {
                 console.log(location.state.match);
-                const splittedCheck = location.state.match.board.split("_");
-                setMatchCategory(splittedCheck[0] + "_" + splittedCheck[1])
+                setMatchCategory(splitCategory(location.state.match.board))
                 const response = await API.graphql(graphqlOperation(queryMatchById(location.state.match.match_id))) as GraphQLResult<any>;
                 const result = response.data?.listMegatonMatches.items[0];
 
@@ -239,6 +238,7 @@ const RefereeSumoMatchBoard = () => {
             let lastMatchId = await getMatchMaxId();
             console.log("Process Group Stage Match");
             teams = sortTeam(teams);
+            console.log(teams[0] + " - " + `${matchCategory}_A`)
             if (teams[0].board.includes(`${matchCategory}_A`)) {
                 console.log("Processing GROUP A")
 
@@ -351,94 +351,6 @@ const RefereeSumoMatchBoard = () => {
             }
         }
         return processGroup;
-    }
-
-    const onFinishClick = async (team1: string, team2: string, whoWin: number) => {
-        // Get match current id
-        const responseMaxId = await API.graphql(graphqlOperation(getAllMatches)) as GraphQLResult<any>;
-        const matchTemp = responseMaxId.data?.listMegatonMatches.items
-        let maxId = 0;
-        if (matchTemp.length !== 0) {
-            matchTemp.sort((a: MatchProps, b: MatchProps) => parseInt(a.match_id, 10) - parseInt(b.match_id, 10));
-            console.log("Process")
-            maxId = parseInt(matchTemp[matchTemp.length - 1].match_id) + 1;
-        }
-        let assignBoard = 'quarter_1';
-        if (match.board === 'quarter_2' || match.board === 'quarter_1') {
-            assignBoard = 'semi_1';
-        }else if (match.board === 'quarter_3' || match.board === 'quarter_4') {
-            assignBoard = 'semi_2';
-        }else if (match.board === 'semi_1' || match.board === 'semi_2') {
-            assignBoard = 'final';
-        }
-
-        console.log("Process " + assignBoard);
-
-        // Check is match available
-        try {
-            const responseCheck = await API.graphql(graphqlOperation(getMatchByBoard(assignBoard))) as GraphQLResult<any>;
-            if (responseCheck.data?.listMegatonMatches.items.length !== 0) {
-                //     Update match
-                if (assignBoard !== 'final') {
-                    if (team1.length !== 0) {
-                        const response = await API.graphql(graphqlOperation(updateFinishMatchTeam2(responseCheck.data?.listMegatonMatches.items[0].match_id, team1, match.brand1))) as GraphQLResult<any>;
-                        console.log(response);
-                        window.location.reload();
-                    }else {
-                        const response = await API.graphql(graphqlOperation(updateFinishMatchTeam2(responseCheck.data?.listMegatonMatches.items[0].match_id, team2, match.brand2))) as GraphQLResult<any>;
-                        console.log(response);
-                        window.location.reload();
-                    }
-                }else {
-                    const responseCheckThird = await API.graphql(graphqlOperation(getMatchByBoard('third'))) as GraphQLResult<any>;
-                    let thirdMatchId = responseCheckThird.data?.listMegatonMatches.items[0].match_id
-                    if (team1.length !== 0) {
-                        const response = await API.graphql(graphqlOperation(updateFinishMatchTeam2(responseCheck.data?.listMegatonMatches.items[0].match_id, team1, match.brand1))) as GraphQLResult<any>;
-                        console.log(response);
-                        const responseThird = await API.graphql(graphqlOperation(updateFinishMatchTeam2(thirdMatchId, match.team2, match.brand2))) as GraphQLResult<any>;
-                        console.log(responseThird);
-                        window.location.reload();
-                    }else {
-                        const response = await API.graphql(graphqlOperation(updateFinishMatchTeam2(responseCheck.data?.listMegatonMatches.items[0].match_id, team2, match.brand2))) as GraphQLResult<any>;
-                        console.log(response);
-                        const responseThird = await API.graphql(graphqlOperation(updateFinishMatchTeam2(thirdMatchId, match.team1, match.brand1))) as GraphQLResult<any>;
-                        console.log(responseThird);
-                        window.location.reload();
-                    }
-                }
-            }else {
-                if (assignBoard !== 'final') {
-                    if (team1.length !== 0) {
-                        const response = await API.graphql(graphqlOperation(createMatch(String(maxId), team1, '', match.brand1, 1, assignBoard, 1, 1))) as GraphQLResult<any>;
-                        console.log(response);
-                        window.location.reload();
-                    }else {
-                        const response = await API.graphql(graphqlOperation(createMatch(String(maxId), team2, '', match.brand2, 1, assignBoard, 1, 1))) as GraphQLResult<any>;
-                        console.log(response);
-                        window.location.reload();
-                    }
-                }else {
-                    if (team1.length !== 0) {
-                        const response = await API.graphql(graphqlOperation(createMatch(String(maxId), match.team1, '', match.brand1, 1, assignBoard, 1, 1))) as GraphQLResult<any>;
-                        console.log(response);
-                        const responseThird = await API.graphql(graphqlOperation(createMatch(String(maxId + 1), match.team2, '', match.brand2, 1, 'third', 1, 1))) as GraphQLResult<any>;
-                        console.log(responseThird);
-                        window.location.reload();
-                    }else {
-                        const response = await API.graphql(graphqlOperation(createMatch(String(maxId), match.team2, '', match.brand2, 1, assignBoard, 1, 1))) as GraphQLResult<any>;
-                        console.log(response);
-                        const responseThird = await API.graphql(graphqlOperation(createMatch(String(maxId + 1), match.team1, '', match.brand1, 1, 'third', 1, 1))) as GraphQLResult<any>;
-                        console.log(responseThird);
-                        window.location.reload();
-                    }
-                }
-            }
-
-        }catch (err) {
-            console.log(err);
-        }
-
-
     }
 
     const processNextKnockOut = async (board: string, category: string, teamWin: string, teamBrand: number, whichTeam: number) => {
