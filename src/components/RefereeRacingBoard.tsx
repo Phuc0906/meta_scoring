@@ -13,6 +13,7 @@ type RefereeRacingBoardProps = {
 const RefereeRacingBoard = ({team, round}: RefereeRacingBoardProps) => {
     const [score, setScore] = useState('');
     const [allowEdit, setAllowEdit] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (round === 1) {
@@ -42,7 +43,7 @@ const RefereeRacingBoard = ({team, round}: RefereeRacingBoardProps) => {
                 <div className="text-4xl text-white w-full text-center mb-10">
                     <label>{team.team} - ROUND {round}</label>
                 </div>
-                <div className="w-1/5 mx-auto border-2 border-black mb-12 rounded-xl text-3xl text-white">
+                <div className={`w-1/5 mx-auto border-2 border-black mb-12 rounded-xl text-3xl text-white ${((team.round1 !== 1) && (round === 1)) ? 'hidden' : ((team.round2 !== 1) && (round === 2)) ? 'hidden' : ''}`}>
                     <input onChange={(e) => {
                         console.log(e.target.value)
                         setScore(e.target.value);
@@ -50,24 +51,30 @@ const RefereeRacingBoard = ({team, round}: RefereeRacingBoardProps) => {
                 </div>
                 {allowEdit ? <div className="w-full">
                     <div className="w-2/12 mx-auto text-center bg-red-600 rounded-xl text-4xl">
-                        <button onClick={async () => {
-                            console.log(score.length)
-                            if (score.length !== 0) {
-                                if (round === 1) {
-                                    console.log(updateRacingTeamRound2(team.team_id, score))
-                                    const response = await API.graphql(graphqlOperation(updateRacingTeamRound1(team.team_id, score))) as GraphQLResult<any>;
-                                    console.log(response);
-                                }else {
-
-                                    const response = await API.graphql(graphqlOperation(updateRacingTeamRound2(team.team_id, score))) as GraphQLResult<any>;
-                                    console.log(response);
-                                }
+                        {isLoading ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 mx-auto animate-spin">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg> : <button onClick={async () => {
+                        console.log(score.length)
+                        setIsLoading(true);
+                        if (score.length !== 0) {
+                            if (round === 1) {
+                                console.log(updateRacingTeamRound2(team.team_id, score))
+                                const response = await API.graphql(graphqlOperation(updateRacingTeamRound1(team.team_id, score))) as GraphQLResult<any>;
+                                console.log(response);
+                                window.location.reload();
                             }else {
-                                alert("Wrong score format")
-                            }
 
-                            setAllowEdit(false);
-                        }} className="w-full px-6 py-2">Lưu Điểm</button>
+                                const response = await API.graphql(graphqlOperation(updateRacingTeamRound2(team.team_id, score))) as GraphQLResult<any>;
+                                console.log(response);
+                                window.location.reload();
+                            }
+                        }else {
+                            alert("Wrong score format")
+                        }
+
+                        setAllowEdit(false);
+                    }} className="w-full px-6 py-2">Lưu Điểm</button>}
+
                     </div>
                 </div> : null}
             </div>

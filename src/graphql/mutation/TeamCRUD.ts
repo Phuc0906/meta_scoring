@@ -55,7 +55,7 @@ export const updateTeamScore = (team_id: string , score: string) => {
 export const getTeamByName = (team: string) => {
     return `
     query MyQuery {
-      listMegatonCompetitionTeamTables(filter: {team: {contains: "${team}"}}) {
+      listMegatonCompetitionTeamTables(filter: {team: {contains: "${team}"}}, limit: 500) {
         items {
           board
           brand

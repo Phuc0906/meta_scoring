@@ -34,7 +34,7 @@ export const getMatchByBoard = (board: string) => {
 export const getAllMatches = (board: string) => {
     return `
         query MyQuery {
-          listMegatonMatches(filter: {board: {contains: "${board}"}}, limit: 40) {
+          listMegatonMatches(filter: {board: {contains: "${board}"}}, limit: 800) {
             items {
               board
               brand1
@@ -162,7 +162,7 @@ export const queryMatchByBoard = (board: string) => {
 export const queryGroupStageTeams = (board: string) => {
     return `
         query MyQuery {
-          listMegatonCompetitionTeamTables(filter: {board: {contains: "${board}"}}) {
+          listMegatonCompetitionTeamTables(filter: {board: {contains: "${board}"}}, limit: 9000) {
             items {
               board
               brand

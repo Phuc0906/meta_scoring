@@ -9,6 +9,7 @@ import team2 from "../assests/logo skis.png";
 import team3 from "../assests/logo HUTECH.png";
 import team4 from "../assests/logo CIS.png";
 import team5 from '../assests/VAS.png'
+import team6 from '../assests/kr_flag.png'
 import {generateGroupMatch, generateMatches, groupByGroup} from "../utils/utils";
 
 const brandArr = [
@@ -31,6 +32,10 @@ const brandArr = [
     {
         name: 'VAS',
         logo: team5
+    },
+    {
+        name: 'KOREA',
+        logo: team6
     }
 ]
 
@@ -96,8 +101,8 @@ const GroupByCategory = ({index, group}: CategoryGroupProps) => {
             let alphabetIdx = 0;
             const tempList = [...shuffled];
             for (let i = 0; i < shuffled.length; i++) {
-                tempList[i].board += "_" + boardArr[alphabetIdx];
-                if ((i + 1) % 7 === 0) {
+                tempList[i].board += "_" + "D";
+                if ((i + 1) % 9 === 0) {
                     alphabetIdx++;
                 }
                 const response = await API.graphql(graphqlOperation(updateTeamBoard(tempList[i].team_id, tempList[i].board))) as GraphQLResult<any>;

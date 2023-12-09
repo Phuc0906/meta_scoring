@@ -7,10 +7,8 @@ import {GraphQLResult} from "@aws-amplify/api";
 import {mutateMatch, queryMatchById, updateMatchScore} from "../graphql/query/Matches";
 import {queryBusyTable} from "../graphql/query/Table";
 import {
-    createMatch,
-    getAllMatches,
-    getMatchByBoard, queryGroupStageTeams, registerTable,
-    updateEndMatch, updateFinishMatchScore, updateFinishMatchTeam1,
+    createMatch,queryGroupStageTeams, registerTable,
+    updateEndMatch, updateFinishMatchTeam1,
     updateFinishMatchTeam2,
     updateGroupStageMatch
 } from "../graphql/mutation/MatchCRUD";
@@ -19,10 +17,12 @@ import team1 from "../assests/logo royal.png";
 import team2 from "../assests/logo skis.png";
 import team3 from "../assests/logo HUTECH.png";
 import team4 from "../assests/logo CIS.png";
+import team5 from '../assests/VAS.png';
+import team6 from '../assests/kr_flag.png'
 import {APITeamProps} from "../pages/Teams";
 import {checkMatchExitByCategory, getMatchMaxId} from "../utils/utils";
 
-const img = [team1, team2, team3, team4];
+const img = [team1, team2, team3, team4, team5, team6];
 
 const RefereeSumoMatchBoard = () => {
     const location = useLocation();
@@ -32,6 +32,7 @@ const RefereeSumoMatchBoard = () => {
     const [selectedTable, setSelectedTable] = useState(1);
     const [availableTable, setAvailableTable] = useState<number[]>([]);
     const [onTableSelect, setOnTableSelect] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [team1, setTeam1] = useState<TeamProps>({
         team: "",
         team_id: "",
@@ -267,19 +268,19 @@ const RefereeSumoMatchBoard = () => {
                 const checkMatch1: MatchProps[] = await checkMatchExitByCategory(`${matchCategory}_quarter_1`);
                 const checkMatch2: MatchProps[] = await checkMatchExitByCategory(`${matchCategory}_quarter_3`);
                 // TODO: MOVE 1st TO QUART 1
-                if (checkMatch1.length === 0) {
+                if (checkMatch2.length === 0) {
                     // TODO: CREATE NEW MATCH
-                    const response1 = await API.graphql(graphqlOperation(createMatch(`${lastMatchId + 1}`, teams[0].team, "", teams[0].brand, 1, `${matchCategory}_quarter_1`, 1, 1))) as GraphQLResult<any>;
+                    const response1 = await API.graphql(graphqlOperation(createMatch(`${lastMatchId + 1}`, teams[0].team, "", teams[0].brand, 1, `${matchCategory}_quarter_3`, 1, 1))) as GraphQLResult<any>;
                 }else {
                     // TODO: UPDATE EXIST MATCH
-                    const response1 = await API.graphql(graphqlOperation(updateFinishMatchTeam2(checkMatch1[0].match_id, teams[0].team, teams[0].brand))) as GraphQLResult<any>;
+                    const response1 = await API.graphql(graphqlOperation(updateFinishMatchTeam1(checkMatch2[0].match_id, teams[0].team, teams[0].brand))) as GraphQLResult<any>;
                 }
                 // TODO: MOVE 2nd TO QUARTER 3
-                if (checkMatch2.length === 0) {
-                    const response2 = await API.graphql(graphqlOperation(createMatch(`${lastMatchId + 2}`, "", teams[1].team, 1, teams[1].brand, `${matchCategory}_quarter_3`, 1, 1))) as GraphQLResult<any>;
+                if (checkMatch1.length === 0) {
+                    const response2 = await API.graphql(graphqlOperation(createMatch(`${lastMatchId + 2}`, "", teams[1].team, 1, teams[1].brand, `${matchCategory}_quarter_1`, 1, 1))) as GraphQLResult<any>;
                 }else {
                     // TODO: UPDATE EXIST MATCH
-                    const response1 = await API.graphql(graphqlOperation(updateFinishMatchTeam1(checkMatch2[0].match_id, teams[1].team, teams[1].brand))) as GraphQLResult<any>;
+                    const response1 = await API.graphql(graphqlOperation(updateFinishMatchTeam2(checkMatch1[0].match_id, teams[1].team, teams[1].brand))) as GraphQLResult<any>;
                 }
             }else if (teams[0].board.includes(`${matchCategory}_C`)) {
                 console.log("Processing GROUP C")
@@ -308,19 +309,19 @@ const RefereeSumoMatchBoard = () => {
                 const checkMatch1: MatchProps[] = await checkMatchExitByCategory(`${matchCategory}_quarter_2`);
                 const checkMatch2: MatchProps[] = await checkMatchExitByCategory(`${matchCategory}_quarter_4`);
                 // TODO: MOVE 1st TO QUART 1
-                if (checkMatch1.length === 0) {
+                if (checkMatch2.length === 0) {
                     // TODO: CREATE NEW MATCH
-                    const response1 = await API.graphql(graphqlOperation(createMatch(`${lastMatchId + 1}`, "", teams[0].team, teams[0].brand, 1, `${matchCategory}_quarter_2`, 1, 1))) as GraphQLResult<any>;
+                    const response1 = await API.graphql(graphqlOperation(createMatch(`${lastMatchId + 1}`, teams[0].team, "", teams[0].brand, 1, `${matchCategory}_quarter_4`, 1, 1))) as GraphQLResult<any>;
                 }else {
                     // TODO: UPDATE EXIST MATCH
-                    const response1 = await API.graphql(graphqlOperation(updateFinishMatchTeam2(checkMatch1[0].match_id, teams[0].team, teams[0].brand))) as GraphQLResult<any>;
+                    const response1 = await API.graphql(graphqlOperation(updateFinishMatchTeam1(checkMatch2[0].match_id, teams[0].team, teams[0].brand))) as GraphQLResult<any>;
                 }
                 // TODO: MOVE 2nd TO QUARTER 3
-                if (checkMatch2.length === 0) {
-                    const response2 = await API.graphql(graphqlOperation(createMatch(`${lastMatchId + 2}`, teams[1].team, "", 1, teams[1].brand, `${matchCategory}_quarter_2`, 1, 1))) as GraphQLResult<any>;
+                if (checkMatch1.length === 0) {
+                    const response2 = await API.graphql(graphqlOperation(createMatch(`${lastMatchId + 2}`, "", teams[1].team, 1, teams[1].brand, `${matchCategory}_quarter_2`, 1, 1))) as GraphQLResult<any>;
                 }else {
                     // TODO: UPDATE EXIST MATCH
-                    const response1 = await API.graphql(graphqlOperation(updateFinishMatchTeam1(checkMatch2[0].match_id, teams[1].team, teams[1].brand))) as GraphQLResult<any>;
+                    const response1 = await API.graphql(graphqlOperation(updateFinishMatchTeam2(checkMatch1[0].match_id, teams[1].team, teams[1].brand))) as GraphQLResult<any>;
                 }
             }
 
@@ -335,7 +336,6 @@ const RefereeSumoMatchBoard = () => {
             const rootTeamScore = (processGroup[i].win - 1) * 3 + (processGroup[i].draw - 1);
             for (let k = 0; k < processGroup.length; k++) {
                 const comparedTeam = (processGroup[k].win - 1) * 3 + (processGroup[k].draw - 1);
-                console.log("Compare: " + comparedTeam + " - " + rootTeamScore)
                 if (rootTeamScore > comparedTeam) {
                     const tmp = processGroup[i];
                     processGroup[i] = processGroup[k];
@@ -350,6 +350,26 @@ const RefereeSumoMatchBoard = () => {
                 }
             }
         }
+
+        for (let i = 0; i < processGroup.length; i++) {
+            const rootTeamScore = (processGroup[i].win - 1) * 3 + (processGroup[i].draw - 1);
+            for (let k = 0; k < processGroup.length; k++) {
+                const comparedTeam = (processGroup[k].win - 1) * 3 + (processGroup[k].draw - 1);
+                if (rootTeamScore > comparedTeam) {
+                    const tmp = processGroup[i];
+                    processGroup[i] = processGroup[k];
+                    processGroup[k] = tmp;
+
+                }else if (rootTeamScore === comparedTeam) {
+                    if (processGroup[k].score > processGroup[i].score) {
+                        const tmp = processGroup[i];
+                        processGroup[i] = processGroup[k];
+                        processGroup[k] = tmp;
+                    }
+                }
+            }
+        }
+
         return processGroup;
     }
 
@@ -660,13 +680,17 @@ const RefereeSumoMatchBoard = () => {
                             }} className="w-full h-full px-9 py-2 rounded-xl">Cancel</button>
                         </div>
                         <div className="bg-red-200 rounded-xl hover:bg-gray-50 active:bg-gray-400">
-                            <button onClick={async () => {
+
+                            {!isLoading ? <button onClick={async () => {
+                                setIsLoading(true);
                                 if (match.board.includes("GROUP")) {
                                     await onMatchEndHandle();
                                 }else {
                                     await onProcessNextMatch();
                                 }
-                            }} className="w-full h-full px-9 py-2 rounded-xl">Xác nhận</button>
+                            }} className="w-full h-full px-9 py-2 rounded-xl">Xác nhận</button> : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 mx-auto animate-spin">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>}
                         </div>
                     </div>
                 </div>

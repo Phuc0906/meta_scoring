@@ -36,7 +36,7 @@ export const updateMatchScore = (match_id: string, score1: number, score2: numbe
 export const queryMatchById = (match_id: string) => {
     return `
     query MyQuery {
-      listMegatonMatches(filter: {match_id: {eq: "${match_id}"}}, limit: 300) {
+      listMegatonMatches(filter: {match_id: {eq: "${match_id}"}}, limit: 500) {
         items {
           board
           brand1

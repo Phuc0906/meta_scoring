@@ -3,7 +3,8 @@ import team1 from '../assests/logo royal.png';
 import team2 from '../assests/logo skis.png';
 import team3 from '../assests/logo HUTECH.png';
 import team4 from '../assests/logo CIS.png';
-import team5 from '../assests/VAS.png'
+import team5 from '../assests/VAS.png';
+import team6 from '../assests/kr_flag.png'
 import {API, graphqlOperation} from "aws-amplify";
 import {
     createTeam,
@@ -82,6 +83,10 @@ const Teams = () => {
         {
             name: 'VAS',
             logo: team5
+        },
+        {
+            name: 'KOREA',
+            logo: team6
         }
     ]
 
