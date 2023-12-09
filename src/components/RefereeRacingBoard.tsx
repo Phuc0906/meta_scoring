@@ -44,20 +44,26 @@ const RefereeRacingBoard = ({team, round}: RefereeRacingBoardProps) => {
                 </div>
                 <div className="w-1/5 mx-auto border-2 border-black mb-12 rounded-xl text-3xl text-white">
                     <input onChange={(e) => {
+                        console.log(e.target.value)
                         setScore(e.target.value);
-                    }} value={score} className="w-full h-full bg-transparent px-5 py-2" type={"number"} style={{outline: 'none'}} />
+                    }} value={score} className="w-full h-full bg-transparent px-5 py-2" step="0.01" type={"number"} style={{outline: 'none'}} />
                 </div>
                 {allowEdit ? <div className="w-full">
                     <div className="w-2/12 mx-auto text-center bg-red-600 rounded-xl text-4xl">
                         <button onClick={async () => {
-                            if (round === 1) {
-                                console.log(updateRacingTeamRound2(team.team_id, score))
-                                const response = await API.graphql(graphqlOperation(updateRacingTeamRound1(team.team_id, score))) as GraphQLResult<any>;
-                                console.log(response);
-                            }else {
+                            console.log(score.length)
+                            if (score.length !== 0) {
+                                if (round === 1) {
+                                    console.log(updateRacingTeamRound2(team.team_id, score))
+                                    const response = await API.graphql(graphqlOperation(updateRacingTeamRound1(team.team_id, score))) as GraphQLResult<any>;
+                                    console.log(response);
+                                }else {
 
-                                const response = await API.graphql(graphqlOperation(updateRacingTeamRound2(team.team_id, score))) as GraphQLResult<any>;
-                                console.log(response);
+                                    const response = await API.graphql(graphqlOperation(updateRacingTeamRound2(team.team_id, score))) as GraphQLResult<any>;
+                                    console.log(response);
+                                }
+                            }else {
+                                alert("Wrong score format")
                             }
 
                             setAllowEdit(false);

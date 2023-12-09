@@ -42,6 +42,7 @@ const RefereeTimeBoard: React.FC<TimeBoardProps> = ({team}) => {
                 </div>
                 <div className="w-1/5 mx-auto border-2 border-black mb-12 rounded-xl text-3xl text-white">
                     <input onChange={(e) => {
+                        console.log(e.target.value)
                         setScore(e.target.value);
                     }} value={score} className="w-full h-full bg-transparent px-5 py-2" type={"number"} style={{outline: 'none'}} />
                 </div>
