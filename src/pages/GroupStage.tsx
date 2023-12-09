@@ -8,6 +8,7 @@ import team1 from "../assests/logo royal.png";
 import team2 from "../assests/logo skis.png";
 import team3 from "../assests/logo HUTECH.png";
 import team4 from "../assests/logo CIS.png";
+import team5 from '../assests/VAS.png'
 import {generateGroupMatch, generateMatches, groupByGroup} from "../utils/utils";
 
 const brandArr = [
@@ -26,6 +27,10 @@ const brandArr = [
     {
         name: 'CIS',
         logo: team4
+    },
+    {
+        name: 'VAS',
+        logo: team5
     }
 ]
 
@@ -50,6 +55,8 @@ type CategoryGroupProps = {
     index: number,
     group: APITeamProps[]
 }
+
+
 
 const GroupByCategory = ({index, group}: CategoryGroupProps) => {
     const [isView, setIsView] = useState(false);
@@ -83,13 +90,14 @@ const GroupByCategory = ({index, group}: CategoryGroupProps) => {
     }, []);
 
     const handleCreateGroup = async () => {
-        if ((boardArr.length !== 0) && (group.length !==0)) {
+        const shuffled = shuffleArray(group);
+        if ((boardArr.length !== 0) && (shuffled.length !==0)) {
             let tracking = 0;
             let alphabetIdx = 0;
-            const tempList = [...group];
-            for (let i = 0; i < group.length; i++) {
+            const tempList = [...shuffled];
+            for (let i = 0; i < shuffled.length; i++) {
                 tempList[i].board += "_" + boardArr[alphabetIdx];
-                if ((i + 1) % 4 === 0) {
+                if ((i + 1) % 7 === 0) {
                     alphabetIdx++;
                 }
                 const response = await API.graphql(graphqlOperation(updateTeamBoard(tempList[i].team_id, tempList[i].board))) as GraphQLResult<any>;
@@ -100,6 +108,16 @@ const GroupByCategory = ({index, group}: CategoryGroupProps) => {
 
     const handleCreateMatches = async () => {
         await generateGroupMatch(group)
+    }
+
+    function shuffleArray(array: APITeamProps[]) {
+        const shuffledArr: APITeamProps[] = array;
+        for (let i = shuffledArr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledArr[i], shuffledArr[j]] = [shuffledArr[j], shuffledArr[i]];
+        }
+
+        return shuffledArr;
     }
 
     return <div key={index} className="  text-2xl font-bold rounded-3xl">
