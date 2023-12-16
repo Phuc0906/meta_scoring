@@ -24,16 +24,16 @@ const HomePage = () => {
 
 
     return <div className="mt-5 mb-20">
-        <SUMO category={"GROUP_SUMO_REGULAR_A"}/>
-        <SUMO category={"GROUP_SUMO_REGULAR_B"}/>
-        <SUMO category={"GROUP_SUMO_REGULAR_C"}/>
-        <SUMO category={"GROUP_SUMO_REGULAR_D"}/>
-        <SUMO category={"SUMO_REGULAR_quarter"}/>
-        <SUMO category={"SUMO_REGULAR_semi"}/>
-        <SUMO category={"SUMO_REGULAR_final"}/>
-        <SUMO category={"SUMO_REGULAR_third"}/>
-        <MicromouseRacing round={1} category={"DRONE_REGULAR"}/>
-        <MicromouseRacing round={2} category={"DRONE_REGULAR"}/>
+        {/*<SUMO category={"GROUP_SUMO_REGULAR_A"}/>*/}
+        {/*<SUMO category={"GROUP_SUMO_REGULAR_B"}/>*/}
+        {/*<SUMO category={"GROUP_SUMO_REGULAR_C"}/>*/}
+        {/*<SUMO category={"GROUP_SUMO_REGULAR_D"}/>*/}
+        {/*<SUMO category={"SUMO_REGULAR_quarter"}/>*/}
+        {/*<SUMO category={"SUMO_REGULAR_semi"}/>*/}
+        {/*<SUMO category={"SUMO_REGULAR_final"}/>*/}
+        {/*<SUMO category={"SUMO_REGULAR_third"}/>*/}
+        <MicromouseRacing round={1} category={"RACING"}/>
+        <MicromouseRacing round={2} category={"RACING"}/>
         {/*<MicromouseRacing round={1} category={"RACING"}/>*/}
         {/*<MicromouseRacing round={2} category={"RACING"}/>*/}
     </div>

@@ -4,6 +4,7 @@ import {updateTeamScore, updateRacingTeamRound1, updateRacingTeamRound2} from ".
 import {GraphQLResult} from "@aws-amplify/api";
 import {MicromouseTeamProps} from "./MicromouseScoringContainer";
 import {img} from "../pages/HomePage";
+import {useNavigate} from "react-router-dom";
 
 type RefereeRacingBoardProps = {
     team: MicromouseTeamProps;
@@ -14,6 +15,7 @@ const RefereeRacingBoard = ({team, round}: RefereeRacingBoardProps) => {
     const [score, setScore] = useState('');
     const [allowEdit, setAllowEdit] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (round === 1) {
@@ -61,12 +63,13 @@ const RefereeRacingBoard = ({team, round}: RefereeRacingBoardProps) => {
                                 console.log(updateRacingTeamRound2(team.team_id, score))
                                 const response = await API.graphql(graphqlOperation(updateRacingTeamRound1(team.team_id, score))) as GraphQLResult<any>;
                                 console.log(response);
-                                window.location.reload();
+                                navigate(-1);
+
                             }else {
 
                                 const response = await API.graphql(graphqlOperation(updateRacingTeamRound2(team.team_id, score))) as GraphQLResult<any>;
                                 console.log(response);
-                                window.location.reload();
+                                navigate(-1);
                             }
                         }else {
                             alert("Wrong score format")
